@@ -56,6 +56,42 @@ class UserController extends BaseController {
       res.status(500).json({ message: 'Error updating profile', error: error.message });
     }
   };
+
+  // Override getAll to exclude sensitive information
+  getAll = async (req, res) => {
+    try {
+      const users = await User.findAll({
+        include: [
+          { model: Property, as: 'properties' }
+        ],
+        attributes: { exclude: ['password'] }
+      });
+      res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching users', error: error.message });
+    }
+  };
+
+  // Override getById to exclude sensitive information
+  getById = async (req, res) => {
+    try {
+      const user = await User.findByPk(req.params.id, {
+        include: [
+          { model: Property, as: 'properties' }
+        ],
+        attributes: { exclude: ['password'] }
+      });
+      
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching user', error: error.message });
+    }
+  };
 }
 
-module.exports = new UserController(); 
+const userController = new UserController();
+module.exports = userController; 

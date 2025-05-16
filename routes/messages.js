@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const messageController = require('../controllers/messageController');
-const { auth } = require('../middlewares/auth');
+const { authMiddleware } = require('../middlewares/auth');
 
 // Message routes
-router.get('/', auth, messageController.getAll);
-router.get('/booking/:bookingId', auth, messageController.getByBooking);
-router.get('/:id', auth, messageController.getById);
-router.post('/', auth, messageController.create);
-router.put('/:id', auth, messageController.update);
-router.delete('/:id', auth, messageController.delete);
+router.get('/', authMiddleware, messageController.getAll);
+router.get('/booking/:bookingId', authMiddleware, messageController.getByBooking);
+router.get('/:id', authMiddleware, messageController.getById);
+router.post('/', authMiddleware, messageController.create);
+router.put('/:id', authMiddleware, messageController.update);
+router.delete('/:id', authMiddleware, messageController.delete);
 
 module.exports = router; 

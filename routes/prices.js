@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const priceController = require('../controllers/priceController');
-const { auth } = require('../middlewares/auth');
+const { authMiddleware } = require('../middlewares/auth');
 
 // Price routes
-router.get('/', auth, priceController.getAll);
-router.get('/property/:propertyId', auth, priceController.getByPropertyAndDateRange);
-router.get('/:id', auth, priceController.getById);
-router.post('/', auth, priceController.create);
-router.post('/property/:propertyId/bulk', auth, priceController.bulkUpdate);
-router.put('/:id', auth, priceController.update);
-router.delete('/:id', auth, priceController.delete);
+router.get('/', authMiddleware, priceController.getAll);
+router.get('/property/:propertyId', authMiddleware, priceController.getByPropertyAndDateRange);
+router.get('/:id', authMiddleware, priceController.getById);
+router.post('/', authMiddleware, priceController.create);
+router.post('/property/:propertyId/bulk', authMiddleware, priceController.bulkUpdate);
+router.put('/:id', authMiddleware, priceController.update);
+router.delete('/:id', authMiddleware, priceController.delete);
 
 module.exports = router; 

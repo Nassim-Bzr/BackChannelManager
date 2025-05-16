@@ -1,33 +1,28 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
+const admin = require('../config/firebase-admin');
 
-const auth = async (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({ message: 'Authentication required' });
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'No token provided' });
     }
-    
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findByPk(decoded.id);
-    
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid authentication token' });
-    }
-    
-    req.token = token;
-    req.user = user;
+
+    const token = authHeader.split('Bearer ')[1];
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    req.user = decodedToken;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Please authenticate', error: error.message });
+    console.error('Error verifying token:', error);
+    res.status(401).json({ error: 'Invalid token' });
   }
 };
 
 // Middleware to check admin role
 const adminAuth = async (req, res, next) => {
   try {
-    await auth(req, res, () => {
+    await authMiddleware(req, res, () => {
       if (req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Admin access required' });
       }
@@ -38,4 +33,4 @@ const adminAuth = async (req, res, next) => {
   }
 };
 
-module.exports = { auth, adminAuth }; 
+module.exports = { authMiddleware, adminAuth }; 
