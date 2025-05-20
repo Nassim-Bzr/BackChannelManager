@@ -10,7 +10,7 @@ router.put('/profile', authMiddleware, userController.updateProfile);
 // Admin routes for user management
 router.get('/', authMiddleware, userController.getAll);
 router.get('/:id', adminAuth, userController.getById);
-router.post('/', authMiddleware, userController.create);
+router.post('/', userController.create);
 router.put('/:id', adminAuth, userController.update);
 router.delete('/:id', adminAuth, userController.delete);
 

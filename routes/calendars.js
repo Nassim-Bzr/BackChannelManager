@@ -7,7 +7,7 @@ const { authMiddleware } = require('../middlewares/auth');
 router.get('/', authMiddleware, calendarController.getAll);
 router.get('/property/:propertyId', authMiddleware, calendarController.getByProperty);
 router.get('/:id', authMiddleware, calendarController.getById);
-router.post('/', authMiddleware, calendarController.create);
+router.post('/', calendarController.create);
 router.put('/:id', authMiddleware, calendarController.update);
 router.delete('/:id', authMiddleware, calendarController.delete);
 
